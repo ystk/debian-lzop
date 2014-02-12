@@ -6,7 +6,7 @@ ABSTRACT
     compression ratio.
 
 SYNOPSIS
-    lzop [ *command* ] [ *options* ] [ *filename* ... ]
+    lzop [ *command* ] [ *options* ] [ *filename* ...  ]
 
     lzop [-dxlthIVL19] [-qvcfFnNPkU] [-o *file*] [-p[*path*]] [-S *suffix*]
     [*filename* ...]
@@ -85,7 +85,7 @@ MAIN COMMAND
 
     -x, --extract
         Extract compressed files to the current working directory. This is
-        the same as `-dPp'.
+        the same as '-dPp'.
 
     -t, --test
         Test. Check the compressed file integrity.
@@ -117,7 +117,7 @@ MAIN COMMAND
     --ls, --ls=*FLAGS*
         List each compressed file in a format similar to ls -ln.
 
-        The following flags are currently honoured: F Append a `*' for
+        The following flags are currently honoured: F Append a '*' for
         executable files. G Inhibit display of group information. Q Enclose
         file names in double quotes.
 
@@ -289,7 +289,7 @@ ADVANCED USAGE
 
        This is the recommended mode for creating backups.
        Requires GNU tar or a compatible version which accepts the
-       `--use-compress-program=XXX' option.
+       '--use-compress-program=XXX' option.
 
     single file mode: individually (de)compress each file
       create
@@ -403,7 +403,7 @@ DIAGNOSTICS
     lzop's diagnostics are intended to be self-explanatory.
 
 BUGS
-    Please report all problems immediately to the author.
+    No bugs are known. Please report all problems immediately to the author.
 
 AUTHOR
     Markus Franz Xaver Johannes Oberhumer <markus@oberhumer.com>
@@ -411,8 +411,8 @@ AUTHOR
 
 COPYRIGHT
     lzop and the LZO library are Copyright (C) 1996, 1997, 1998, 1999, 2000,
-    2001, 2002, 2003, 2004, 2005 by Markus Franz Xaver Johannes Oberhumer.
-    All Rights Reserved.
+    2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010 by Markus
+    Franz Xaver Johannes Oberhumer. All Rights Reserved.
 
     lzop and the LZO library are distributed under the terms of the GNU
     General Public License (GPL).

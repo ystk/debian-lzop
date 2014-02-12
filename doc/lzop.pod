@@ -126,7 +126,7 @@ same the directory as the compressed file.
 =item -x, --extract
 
 Extract compressed files to the current working
-directory. This is the same as `-dPp'.
+directory. This is the same as '-dPp'.
 
 =item -t, --test
 
@@ -163,7 +163,7 @@ as compressed_size / uncompressed_size.
 List each compressed file in a format similar to S<B<ls -ln>>.
 
 The following flags are currently honoured:
-  F  Append a `*' for executable files.
+  F  Append a '*' for executable files.
   G  Inhibit display of group information.
   Q  Enclose file names in double quotes.
 
@@ -401,7 +401,7 @@ ways. Here are some usage examples:
 
   This is the recommended mode for creating backups.
   Requires GNU tar or a compatible version which accepts the
-  `--use-compress-program=XXX' option.
+  '--use-compress-program=XXX' option.
 
 =item B<single file mode:> individually (de)compress each file
 
@@ -537,7 +537,7 @@ B<lzop's> diagnostics are intended to be self-explanatory.
 
 =head1 BUGS
 
-Please report all problems immediately to the author.
+No bugs are known. Please report all problems immediately to the author.
 
 
 
@@ -552,8 +552,8 @@ http://www.oberhumer.com/opensource/lzop/
 =head1 COPYRIGHT
 
 lzop and the LZO library are
-Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005
-by Markus Franz Xaver Johannes Oberhumer.
+Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005,
+2006, 2007, 2008, 2009, 2010 by Markus Franz Xaver Johannes Oberhumer.
 All Rights Reserved.
 
 lzop and the LZO library are distributed under the terms

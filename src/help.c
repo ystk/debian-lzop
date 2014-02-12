@@ -2,7 +2,7 @@
 
    This file is part of the lzop file compressor.
 
-   Copyright (C) 1996-2005 Markus Franz Xaver Johannes Oberhumer
+   Copyright (C) 1996-2010 Markus Franz Xaver Johannes Oberhumer
    All Rights Reserved.
 
    lzop and the LZO library are free software; you can redistribute them
@@ -48,7 +48,7 @@ void head(void)
     fg = con_fg(f,FG_GREEN);
     con_fprintf(f,
                 "                          Lempel-Ziv-Oberhumer Packer\n"
-                "   Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005\n"
+                "                           Copyright (C) 1996 - 2010\n"
                 "lzop v%-11s  Markus Franz Xaver Johannes Oberhumer  %20s\n"
                 "\n",
                 LZOP_VERSION_STRING, LZOP_VERSION_DATE);
@@ -123,8 +123,8 @@ void help(void)
 
     con_fprintf(f,
 "  -q     be quiet                          -v       be verbose\n"
-"  -c     write on standard output          -oFILE   write output to `FILE'\n"
-"  -p     write output to current dir       -pDIR    write to path `DIR'\n"
+"  -c     write on standard output          -oFILE   write output to 'FILE'\n"
+"  -p     write output to current dir       -pDIR    write to path 'DIR'\n"
 "  -f     force overwrite of output files\n"
 "  -n     do not restore the original file name%s\n"
 "  -N     restore the original file name%s\n"
@@ -178,8 +178,12 @@ con_fprintf(f,
 //
 **************************************************************************/
 
+#ifndef LZOP_BUILD_DATE_TIME
+#define LZOP_BUILD_DATE_TIME __DATE__ " " __TIME__
+#endif
+
 const char lzop_rcsid[] =
-    "\n$" "Id: lzop " LZOP_VERSION_STRING " built " __DATE__ " " __TIME__ " $\n";
+    "\n$" "Id: lzop " LZOP_VERSION_STRING " built " LZOP_BUILD_DATE_TIME " $\n";
 
 LZO_EXTERN(const lzo_bytep) lzo_copyright(void);
 
@@ -195,7 +199,7 @@ void version(void)
 
     con_fprintf(f,
         "lzop version: v" LZOP_VERSION_STRING ", " LZOP_VERSION_DATE "\n"
-        "lzop build date: " __DATE__ " " __TIME__ "\n");
+        "lzop build date: " LZOP_BUILD_DATE_TIME "\n");
 
     for (i = 0, qq = lzo_copyright(); i < sizeof(pp)-1 && *qq; i++, qq++)
         pp[i] = (char) *qq;
@@ -245,10 +249,10 @@ void sysinfo(void)
 #if defined(OPTIONS_VAR)
     env = getenv(OPTIONS_VAR);
     if (env && env[0])
-        con_fprintf(f,"Contents of environment variable %s: `%s'\n\n",
+        con_fprintf(f,"Contents of environment variable %s: '%s'\n\n",
                        OPTIONS_VAR, env);
     else
-        con_fprintf(f,"Environment variable `%s' is not set.\n\n",
+        con_fprintf(f,"Environment variable '%s' is not set.\n\n",
                        OPTIONS_VAR);
 #endif
 

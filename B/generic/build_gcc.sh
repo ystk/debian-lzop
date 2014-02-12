@@ -17,7 +17,7 @@ UNAME_MACHINE=`(uname -m) 2>/dev/null` || UNAME_MACHINE=unknown
 case $UNAME_MACHINE in
     i[34567]86)
         CC="$CC -m32"
-        CPPFLAGS="-DLZO_USE_ASM"
+        CPPFLAGS="-DLZO_USE_ASM_1"
         ;;
 esac
 

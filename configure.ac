@@ -3,7 +3,7 @@
 #
 #  This file is part of the lzop file compressor.
 #
-#  Copyright (C) 1996-2005 Markus Franz Xaver Johannes Oberhumer
+#  Copyright (C) 1996-2010 Markus Franz Xaver Johannes Oberhumer
 #  All Rights Reserved.
 #
 #  lzop and the LZO library are free software; you can redistribute them
@@ -31,13 +31,13 @@
 # // Init
 # ************************************************************************/
 
-AC_COPYRIGHT([Copyright (C) 1996-2005 Markus Franz Xaver Johannes Oberhumer.
+AC_COPYRIGHT([Copyright (C) 1996-2010 Markus Franz Xaver Johannes Oberhumer.
 All Rights Reserved.
 This configure script may be copied, distributed and modified under the
 terms of the GNU General Public License; see COPYING for more details.])
 
-AC_PREREQ(2.59)
-AC_INIT([lzop],[1.02rc1],[lzop-bugs@oberhumer.com])
+AC_PREREQ(2.67)
+AC_INIT([lzop],[1.03],[lzop-bugs@oberhumer.com],[lzop],[http://www.oberhumer.com/opensource/lzop/])
 AC_MSG_NOTICE([Configuring $PACKAGE_NAME $PACKAGE_VERSION])
 AC_CONFIG_SRCDIR(src/lzop.c)
 AC_CONFIG_AUX_DIR(autoconf)
@@ -48,7 +48,10 @@ AC_CANONICAL_TARGET
 AM_MAINTAINER_MODE
 
 if test -z "$ac_abs_top_srcdir"; then
-    _AC_SRCPATHS(.)
+    _AC_SRCDIRS([.])
+fi
+if test -z "$ac_abs_top_srcdir"; then
+    as_fn_error 1 "internal error: ac_abs_top_srcdir is not set"
 fi
 if test -r .Conf.settings1; then
     . ./.Conf.settings1
@@ -67,7 +70,8 @@ AC_C_CONST
 mfx_ACC_CHECK_ENDIAN
 AC_SYS_LARGEFILE
 
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([1.11.1 foreign])
+AM_SILENT_RULES([no])
 AC_CONFIG_HEADERS([config.h:config.hin])
 
 
@@ -110,20 +114,20 @@ fi
 AC_MSG_CHECKING([for version information in $lzoconf_h...])
 lzoconf_h_version=
 if test "X$lzoconf_h_version" = X; then
-    AC_COMPILE_IFELSE([[#include <$lzoconf_h>
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([#include <$lzoconf_h>
 #if defined(LZO_VERSION) && (LZO_VERSION >= 0x2000)
 #else
 #  error "LZO_VERSION v2"
 #endif
-]], [lzoconf_h_version=2], [])
+])], [lzoconf_h_version=2], [])
 fi
 if test "X$lzoconf_h_version" = X; then
-    AC_COMPILE_IFELSE([[#include <$lzoconf_h>
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([#include <$lzoconf_h>
 #if defined(LZO_VERSION) && (LZO_VERSION >= 0x1040)
 #else
 #  error "LZO_VERSION v1"
 #endif
-]], [lzoconf_h_version=1], [])
+])], [lzoconf_h_version=1], [])
 fi
 AC_MSG_RESULT([v$lzoconf_h_version])
 if test "X$lzoconf_h_version" = X; then
@@ -216,7 +220,7 @@ cat <<EOF
 
    ${PACKAGE_NAME} ${PACKAGE_VERSION} configured.
 
-   Copyright (C) 1996-2005 Markus Franz Xaver Johannes Oberhumer
+   Copyright (C) 1996-2010 Markus Franz Xaver Johannes Oberhumer
    All Rights Reserved.
 
    lzop and the LZO library are free software; you can redistribute them

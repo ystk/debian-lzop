@@ -2,7 +2,7 @@
 
    This file is part of the lzop file compressor.
 
-   Copyright (C) 1996-2005 Markus Franz Xaver Johannes Oberhumer
+   Copyright (C) 1996-2010 Markus Franz Xaver Johannes Oberhumer
    All Rights Reserved.
 
    lzop and the LZO library are free software; you can redistribute them
@@ -80,6 +80,7 @@ lzo_bool mb_alloc(mblock_p m, lzo_uint32 size, lzo_uint align)
     m->mb_mem_alloc = (lzo_bytep) acc_halloc(m->mb_size_alloc);
     if (m->mb_mem_alloc == NULL)
         return 0;
+    acc_hmemset(m->mb_mem_alloc, 0, m->mb_size_alloc);
 
     m->mb_mem = LZO_PTR_ALIGN_UP(m->mb_mem_alloc,m->mb_align);
     assert(m->mb_mem >= m->mb_mem_alloc);

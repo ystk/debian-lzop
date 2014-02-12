@@ -2,7 +2,7 @@
 
    This file is part of the lzop file compressor.
 
-   Copyright (C) 1996-2005 Markus Franz Xaver Johannes Oberhumer
+   Copyright (C) 1996-2010 Markus Franz Xaver Johannes Oberhumer
    All Rights Reserved.
 
    lzop and the LZO library are free software; you can redistribute them
@@ -28,7 +28,6 @@
 
 #include "conf.h"
 #include "version.h"
-#include "mygetopt.h"
 
 
 /*************************************************************************
@@ -72,6 +71,7 @@ static int done_output_name = 0;
 static int done_output_path = 0;
 static int done_suffix = 0;
 
+/* invocation options */
 enum {
     PGM_LZOP,
     PGM_UNLZOP,
@@ -199,10 +199,10 @@ void e_envopt(const char *n)
 {
     fflush(con_term);
     if (n)
-        fprintf(stderr,"%s: invalid string `%s' in environment variable `%s'\n",
+        fprintf(stderr,"%s: invalid string '%s' in environment variable '%s'\n",
                         argv0, n, OPTIONS_VAR);
     else
-        fprintf(stderr,"%s: illegal option in environment variable `%s'\n",
+        fprintf(stderr,"%s: illegal option in environment variable '%s'\n",
                         argv0, OPTIONS_VAR);
     e_exit(EXIT_USAGE);
 }
@@ -362,7 +362,7 @@ int f_open(file_t *ft, lzo_bool r)
         ft->file = fopen(ft->name,"rb");
     else if (ft->open_flags & O_EXCL)
     {
-        if (file_exists(ft->name)
+        if (file_exists(ft->name))
             errno = EEXIST;
         else
             ft->file = fopen(ft->name,"wb");
@@ -605,7 +605,7 @@ static lzo_int f_read(file_t *ft, lzo_voidp buf, lzo_int cnt)
 
 
 /***********************************************************************
-// lzop file signature (shamelessly borrowed from PNG)
+// lzop file signature
 ************************************************************************/
 
 /*
@@ -645,7 +645,6 @@ static const char * const header_error[] = {
 };
 
 
-/* This coding is derived from Alexander Lehmann's pngcheck code. */
 static int check_magic(const unsigned char *magic)
 {
     const unsigned char *m;
@@ -783,7 +782,7 @@ void write_header(file_t *ft, const header_t *h)
     size_t l;
 
 #ifdef MAINT
-    /* undocumented option `--no-header'. just for testing. */
+    /* undocumented option '--no-header'. just for testing. */
     if (opt_noheader > 0)
     {
         switch (opt_noheader)
@@ -1194,7 +1193,7 @@ void do_list_total(void)
 
 
 /*************************************************************************
-// list a file similar to `ls -ln'
+// list a file similar to 'ls -ln'
 **************************************************************************/
 
 void do_ls(const header_t *h, lzop_ulong_t d_len, lzop_ulong_t c_len)
@@ -1225,11 +1224,19 @@ void do_ls(const header_t *h, lzop_ulong_t d_len, lzop_ulong_t c_len)
     fprintf(f," %8lu", (unsigned long) d_len);
 #else
     {
-        unsigned long dl = (unsigned long) (d_len % 100000000ul);
-        if (dl == d_len)
-            fprintf(f," %8lu", (unsigned long) d_len);
+        unsigned long d0, d1, d2;
+        d0 = (unsigned long)  (d_len % 100000000ul);
+        if (d0 == d_len)
+            fprintf(f," %8lu", d0);
         else
-            fprintf(f," %lu%08lu", (unsigned long) (d_len / 100000000ul), dl);
+        {
+            d1 = (unsigned long) ((d_len / 100000000ul) % 100000000ul);
+            d2 = (unsigned long) ((d_len / 100000000ul) / 100000000ul);
+            if (d2 != 0)
+                fprintf(f,"%lu%08lu%08lu", d2, d1, d0);
+            else
+                fprintf(f,"%lu%08lu", d1, d0);
+        }
     }
 #endif
     time2ls(s, sizeof(s), &t);
@@ -1331,9 +1338,9 @@ static lzo_bool oname_error(void)
         return 1;
     }
     if (opt_name != 1)
-        error(&fi,"can't determine name of output file (try option `-N')");
+        error(&fi,"can't determine name of output file (try option '-N')");
     else
-        error(&fi,"can't determine name of output file (use option `-o')");
+        error(&fi,"can't determine name of output file (use option '-o')");
     strcpy(fo.name,UNKNOWN_NAME);
     return 0;
 }
@@ -1382,7 +1389,7 @@ static lzo_bool p_set_oname(const header_t *h)
     l = strlen(fo.name);
     if (l >= PATH_MAX)
     {
-        error(&fo,"name too long (use option `-o')");
+        error(&fo,"name too long (use option '-o')");
         return 0;
     }
     base = fo.name + fn_baseindex(fo.name);
@@ -1468,7 +1475,7 @@ static lzo_bool p_set_oname(const header_t *h)
 
     if (strlen(fo.name) >= PATH_MAX)
     {
-        error(&fo,"name too long (use option `-o')");
+        error(&fo,"name too long (use option '-o')");
         return 0;
     }
 #if defined(DOSISH)
@@ -1851,7 +1858,9 @@ static void copy_perms(void)
 #endif
 #if defined(HAVE_CHOWN)
     /* copy the ownership */
-    (void) chown(fo.name, fi.st.st_uid, fi.st.st_gid);
+    if (chown(fo.name, fi.st.st_uid, fi.st.st_gid) != 0) {
+        /* ignore */
+    }
 #endif
 }
 
@@ -1927,7 +1936,9 @@ static void restore_perms(const header_t *h)
 #if defined(HAVE_CHOWN)
     /* copy the ownership */
     if (!opt_stdin)
-        (void) chown(fo.name, fi.st.st_uid, fi.st.st_gid);
+        if (chown(fo.name, fi.st.st_uid, fi.st.st_gid) != 0) {
+            /* ignore */
+        }
 #endif
     UNUSED(h);
 }
@@ -1943,7 +1954,7 @@ static lzo_bool warn_multipart(file_t *ft, const header_t *h)
     if (opt_stdout || opt_output_name)
     {
         if (!ft->warn_multipart)
-            warn(&fi,"this is a multipart archive (try option `-N')");
+            warn(&fi,"this is a multipart archive (try option '-N')");
         ft->warn_multipart = 1;
     }
     else if (opt_file && !can_restore_name(ft,h))
@@ -1952,7 +1963,7 @@ static lzo_bool warn_multipart(file_t *ft, const header_t *h)
         if (opt_cmd == CMD_TEST)
         {
             if (!ft->warn_multipart)
-                warn(&fi,"this is a multipart archive (try option `-N')");
+                warn(&fi,"this is a multipart archive (try option '-N')");
             ft->warn_multipart = 1;
         }
         else if (can_restore_name(ft,h))
@@ -1963,7 +1974,7 @@ static lzo_bool warn_multipart(file_t *ft, const header_t *h)
         }
         else
         {
-            error(&fi,"multipart archive, but no filename stored (use option `-o')");
+            error(&fi,"multipart archive, but no filename stored (use option '-o')");
             return 0;
         }
     }
@@ -2004,7 +2015,7 @@ static lzo_bool do_decompress(const char *name, lzo_bool handle_perms)
 
         if (!p_header(&fi,&header))
         {
-            /* use `--info -f -f' to try to list a corrupted header */
+            /* use '--info -f -f' to try to list a corrupted header */
             if (opt_cmd == CMD_INFO && opt_force >= 2)
             {
                 (void) x_get_method(&header);
@@ -2133,7 +2144,7 @@ static void check_not_both(lzo_bool e1, lzo_bool e2, int c1, int c2)
     if (e1 && e2)
     {
         fprintf(stderr,"%s: ",argv0);
-        fprintf(stderr,"cannot use both `-%c' and `-%c'\n", c1, c2);
+        fprintf(stderr,"cannot use both '-%c' and '-%c'\n", c1, c2);
         e_usage();
     }
 }
@@ -2171,7 +2182,7 @@ void check_options(int i, int argc)
         opt_suffix[0] = 0;
         if (opt_unlink && !opt_force)
         {
-            fprintf(stderr,"%s: both `-c' and `-U' given (use `-f' to force)\n",argv0);
+            fprintf(stderr,"%s: both '-c' and '-U' given (use '-f' to force)\n",argv0);
             e_usage();
         }
     }
@@ -2188,7 +2199,7 @@ void check_options(int i, int argc)
     {
         if (opt_cmd == CMD_COMPRESS && opt_output_path)
         {
-            fprintf(stderr,"%s: cannot use `-p' when compressing stdin\n",argv0);
+            fprintf(stderr,"%s: cannot use '-p' when compressing stdin\n",argv0);
             e_usage();
         }
 
@@ -2296,7 +2307,7 @@ void set_output_name(const char *n, lzo_bool allow_m)
 #if 1
     if (done_output_name > 0)
     {
-        fprintf(stderr,"%s: option `-o' more than once given\n",argv0);
+        fprintf(stderr,"%s: option '-o' more than once given\n",argv0);
         e_usage();
     }
 #endif
@@ -2324,7 +2335,7 @@ void set_output_path(const char *n, lzo_bool allow_m)
 #if 1
     if (done_output_path > 0)
     {
-        fprintf(stderr,"%s: option `-p' more than once given\n",argv0);
+        fprintf(stderr,"%s: option '-p' more than once given\n",argv0);
         e_usage();
     }
 #endif
@@ -2385,15 +2396,15 @@ lzo_bool set_suffix(const char *n)
 #if 1
     if (done_suffix > 0)
     {
-        fprintf(stderr,"%s: option `-S' more than once given\n",argv0);
+        fprintf(stderr,"%s: option '-S' more than once given\n",argv0);
         e_usage();
         return 0;
     }
 #endif
-    while (*n == '.')
+    while (n && *n == '.')
         n++;
 
-    if (*n == 0 || *n == '-')
+    if (!n || *n == 0 || *n == '-')
         return 0;
 #if 1 || defined(DOSISH)
     if (strchr(n,'.'))
@@ -2409,7 +2420,7 @@ lzo_bool set_suffix(const char *n)
     l = strlen(n);
     if (l + 1 > SUFFIX_MAX || (opt_shortname && l > 3))
     {
-        fprintf(stderr,"%s: suffix `%s' is too long\n",argv0,n);
+        fprintf(stderr,"%s: suffix '%s' is too long\n",argv0,n);
         e_usage();
         return 0;
     }
@@ -2427,7 +2438,7 @@ lzo_bool set_suffix(const char *n)
 
 static
 char* prepare_shortopts(char *buf, const char *n,
-                        const struct mfx_option *longopts)
+                        const struct acc_getopt_longopt_t *longopts)
 {
     char *o = buf;
 
@@ -2452,8 +2463,9 @@ char* prepare_shortopts(char *buf, const char *n,
 }
 
 
-static int do_option(int optc)
+static int do_option(acc_getopt_p g, int optc)
 {
+#define mfx_optarg      g->optarg
     int i = 0;
     int m = -1;
 
@@ -2533,7 +2545,7 @@ static int do_option(int optc)
     case 'S':
         if (!set_suffix(mfx_optarg))
         {
-            fprintf(stderr,"%s: invalid suffix `%s'\n",argv0,mfx_optarg);
+            fprintf(stderr,"%s: invalid suffix '%s'\n",argv0,mfx_optarg);
             e_usage();
         }
         break;
@@ -2543,15 +2555,18 @@ static int do_option(int optc)
     case 'T':
         if (!(mfx_optarg && isdigit(mfx_optarg[0])))
         {
-            fprintf(stderr,"%s: invalid `--threads=' args: `%s'\n",argv0,mfx_optarg);
+            fprintf(stderr,"%s: invalid '--threads=' args: '%s'\n",argv0,mfx_optarg);
             e_usage();
         }
         opt_num_threads = atoi(mfx_optarg);
-        if (opt_num_threads < 1 || opt_num_threads > 64)
+        if (opt_num_threads < 1 || opt_num_threads > MAX_NUM_THREADS)
         {
             fprintf(stderr,"%s: invalid number of threads: %d\n",argv0,opt_num_threads);
             e_usage();
         }
+#if !defined(WITH_THREADS)
+        opt_num_threads = 1;
+#endif
         break;
     case 'U':
         opt_unlink = 1;
@@ -2568,7 +2583,7 @@ static int do_option(int optc)
         opt_console = CON_NONE;
         fprintf(stdout,"lzop %s\n",LZOP_VERSION_STRING);
         fprintf(stdout,"LZO library %s\n",lzo_version_string());
-        fprintf(stdout,"Copyright (C) 1996-2005 Markus Franz Xaver Johannes Oberhumer\n");
+        fprintf(stdout,"Copyright (C) 1996-2010 Markus Franz Xaver Johannes Oberhumer\n");
         e_exit(EXIT_OK);
         break;
     case 'x':
@@ -2592,7 +2607,7 @@ static int do_option(int optc)
             for (i = 0; opt_ls_flags[i]; i++)
                 if (!strchr("FGQ",opt_ls_flags[i]))
                 {
-                    fprintf(stderr,"%s: invalid `--ls' flags: `%s'\n",argv0,mfx_optarg);
+                    fprintf(stderr,"%s: invalid '--ls' flags: '%s'\n",argv0,mfx_optarg);
                     e_usage();
                 }
         }
@@ -2680,7 +2695,7 @@ static int do_option(int optc)
     case 521:
         if (!(mfx_optarg && isdigit(mfx_optarg[0])))
         {
-            fprintf(stderr,"%s: invalid `--filter=' args: `%s'\n",argv0,mfx_optarg);
+            fprintf(stderr,"%s: invalid '--filter=' args: '%s'\n",argv0,mfx_optarg);
             e_usage();
         }
         if (strcmp(mfx_optarg,"0") == 0)
@@ -2708,13 +2723,27 @@ static int do_option(int optc)
     UNUSED(i);
     UNUSED(m);
     return 0;
+#undef mfx_optarg
+}
+
+
+static void handle_opterr(acc_getopt_p g, const char *f, void *v)
+{
+    struct A { va_list ap; };
+    struct A *a = (struct A *) v;
+    fprintf( stderr, "%s: ", g->progname);
+    if (a)
+        vfprintf(stderr, f, a->ap);
+    else
+        fprintf( stderr, "UNKNOWN GETOPT ERROR");
+    fprintf( stderr, "\n");
 }
 
 
 static int get_options(int argc, char **argv)
 {
 
-static const struct mfx_option longopts[] =
+static const struct acc_getopt_longopt_t longopts[] =
 {
     {"best",       0, 0, '9'},      /* compress better */
     {"decompress", 0, 0, 'd'},      /* decompress */
@@ -2774,27 +2803,29 @@ static const struct mfx_option longopts[] =
     { 0, 0, 0, 0 }
 };
 
+    acc_getopt_t mfx_getopt;
     int optc;
     int i;
-    char buf[128];
+    char shortopts[128];
 
-    prepare_shortopts(buf,"123456789hH?PVp::",longopts),
-    mfx_optind = 0;
-    mfx_opterr = 1;
-    while ((optc = mfx_getopt_long(argc, argv, buf, longopts, NULL)) >= 0)
+    prepare_shortopts(shortopts, "123456789hH?PVp::", longopts),
+    acc_getopt_init(&mfx_getopt, 1, argc, argv);
+    mfx_getopt.progname = argv0;
+    mfx_getopt.opterr = handle_opterr;
+    while ((optc = acc_getopt(&mfx_getopt, shortopts, longopts, NULL)) >= 0)
     {
-        if (do_option(optc) != 0)
+        if (do_option(&mfx_getopt, optc) != 0)
             e_usage();
     }
 
     /* accept "-" as synonym for stdin */
-    for (i = mfx_optind; i < argc; i++)
-        if (strcmp(argv[i],"-") == 0)
+    for (i = mfx_getopt.optind; i < argc; i++)
+        if (strcmp(argv[i], "-") == 0)
             opt_stdin = OPT_STDIN_REQUESTED;
-    while (mfx_optind < argc && strcmp(argv[mfx_optind],"-") == 0)
-        mfx_optind++;
-
-    return mfx_optind;
+    for (i = mfx_getopt.optind; i < argc; i++)
+        if (strcmp(argv[i], "-") != 0)
+            break;
+    return i;
 }
 
 
@@ -2804,7 +2835,7 @@ static void get_envoptions(int argc, char **argv)
 
 /* only some options are allowed in the environment variable */
 
-static const struct mfx_option longopts[] =
+static const struct acc_getopt_longopt_t longopts[] =
 {
     {"best",       0, 0, '9'},      /* compress better */
     {"checksum",   0, 0, 'C'},
@@ -2838,7 +2869,8 @@ static const struct mfx_option longopts[] =
     int nargc;
     char **nargv = NULL;
     static const char sep[] = " \t";
-    char buf[128];
+    acc_getopt_t mfx_getopt;
+    char shortopts[128];
 
     env = (char *) getenv(OPTIONS_VAR);
     if (env == NULL || !env[0])
@@ -2901,17 +2933,18 @@ static const struct mfx_option longopts[] =
         if (nargv[i][0] != '-' || !nargv[i][1] || strcmp(nargv[i],"--") == 0)
             e_envopt(nargv[i]);
 
-    prepare_shortopts(buf,"123456789P",longopts);
-    mfx_optind = 0;
-    mfx_opterr = 1;
-    while ((optc = mfx_getopt_long(nargc, nargv, buf, longopts, NULL)) >= 0)
+    prepare_shortopts(shortopts, "123456789P", longopts);
+    acc_getopt_init(&mfx_getopt, 1, nargc, nargv);
+    mfx_getopt.progname = argv0;
+    mfx_getopt.opterr = handle_opterr;
+    while ((optc = acc_getopt(&mfx_getopt, shortopts, longopts, NULL)) >= 0)
     {
-        if (do_option(optc) != 0)
+        if (do_option(&mfx_getopt, optc) != 0)
             e_envopt(NULL);
     }
 
-    if (mfx_optind < nargc)
-        e_envopt(nargv[mfx_optind]);
+    if (mfx_getopt.optind < nargc)
+        e_envopt(nargv[mfx_getopt.optind]);
 
     free(nargv);
     free(env);
@@ -2921,19 +2954,6 @@ static const struct mfx_option longopts[] =
         opt_checksum = -1;          /* reset to default */
 }
 #endif /* defined(OPTIONS_VAR) */
-
-
-static void first_options(int argc, char **argv)
-{
-    int i;
-
-    for (i = 1; i < argc; i++)
-        if (strcmp(argv[i],"--version") == 0)
-            do_option('V'+256);
-    for (i = 1; i < argc; i++)
-        if (strcmp(argv[i],"--help") == 0)
-            do_option('h'+256);
-}
 
 
 #define ACC_WANT_ACC_CHK_CH 1
@@ -2957,7 +2977,7 @@ static void sanity_check(void)
 // main entry point
 **************************************************************************/
 
-int main(int argc, char *argv[])
+int __acc_cdecl_main main(int argc, char *argv[])
 {
     int i;
     lzo_bool foreground = 0;
@@ -3064,7 +3084,6 @@ int main(int argc, char *argv[])
     assert(STDERR_FILENO >= 0);
 
     f_init();
-    first_options(argc,argv);
 #if defined(OPTIONS_VAR)
     get_envoptions(argc,argv);
 #endif

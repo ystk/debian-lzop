@@ -1,9 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 #
-# Copyright (C) 1996-2005 Markus F.X.J. Oberhumer
+# Copyright (C) 1996-2010 Markus F.X.J. Oberhumer
 #
-
-AUTOMAKE_OPTIONS = 1.9.5 foreign
 
 SUBDIRS = src doc
 

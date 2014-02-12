@@ -2,7 +2,7 @@
 
    This file is part of the lzop file compressor.
 
-   Copyright (C) 1996-2005 Markus Franz Xaver Johannes Oberhumer
+   Copyright (C) 1996-2010 Markus Franz Xaver Johannes Oberhumer
    All Rights Reserved.
 
    lzop and the LZO library are free software; you can redistribute them
@@ -29,7 +29,7 @@
 #include "conf.h"
 
 #if (ACC_CC_MSC && (_MSC_VER >= 1000))
-   /* avoid `-W4' warnings */
+   /* avoid '-W4' warnings */
 #  pragma warning(disable: 4244)
 #endif
 
@@ -116,12 +116,12 @@ void t_mtf(lzo_bytep p, lzo_uint l)
 {
     unsigned char b[256];
     unsigned char c;
-    int i;
+    unsigned i;
 
     if (l <= 1)
         return;
 
-    i = 255; do b[i] = (unsigned char) i; while (--i >= 0);
+    i = 256; do { --i; b[i] = (unsigned char) i; } while (i != 0);
 
     do {
         c = *p;
@@ -141,12 +141,12 @@ void t_unmtf(lzo_bytep p, lzo_uint l)
 {
     unsigned char b[256];
     unsigned char c;
-    int i;
+    unsigned i;
 
     if (l <= 1)
         return;
 
-    i = 255; do b[i] = (unsigned char) i; while (--i >= 0);
+    i = 256; do { --i; b[i] = (unsigned char) i; } while (i != 0);
 
     do {
         i = *p;
