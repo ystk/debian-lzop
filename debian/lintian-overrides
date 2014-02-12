@@ -1,1 +1,0 @@
-lzop: package-has-a-duplicate-relation depends: liblzo2-2, liblzo2-2 (>= 2.02), liblzo2-2 (<< 2.03~)

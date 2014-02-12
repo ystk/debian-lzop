@@ -2,7 +2,7 @@
 
    This file is part of the lzop file compressor.
 
-   Copyright (C) 1996-2005 Markus Franz Xaver Johannes Oberhumer
+   Copyright (C) 1996-2010 Markus Franz Xaver Johannes Oberhumer
    All Rights Reserved.
 
    lzop and the LZO library are free software; you can redistribute them
@@ -40,12 +40,12 @@
 
 
 #if 1 && defined(LZOP_ENABLE_ANSI) && !defined(DOSISH)
-#  define USE_ANSI
+#  define USE_ANSI 1
 #endif
 
 #if 1 && defined(__linux__) && defined(LZOP_ENABLE_LINUX_CONSOLE)
-#  define USE_SCREEN
-#  define USE_SCREEN_VCSA
+#  define USE_SCREEN 1
+#  define USE_SCREEN_VCSA 1
 #  if !defined(HAVE_LINUX_KD_H)
 #    undef USE_SCREEN
 #    undef USE_SCREEN_VCSA
@@ -57,16 +57,16 @@
 #endif
 
 #if 0 && defined(HAVE_NCURSES_H) && defined(HAVE_LIBNCURSES)
-#  define USE_SCREEN
-#  define USE_SCREEN_CURSES
+#  define USE_SCREEN 1
+#  define USE_SCREEN_CURSES 1
 #endif
 
 #if 0 && defined(__DJGPP__)
-#  define USE_SCREEN
+#  define USE_SCREEN 1
 #endif
 
 #if 1 && defined(USE_SCREEN)
-#  define USE_FRAMES
+#  define USE_FRAMES 1
 #endif
 
 
@@ -85,7 +85,7 @@
 
 
 #if 0 || defined(USE_ANSI) || defined(USE_SCREEN)
-#  define USE_CONSOLE
+#  define USE_CONSOLE 1
 #endif
 
 #if 0 || defined(NO_CONSOLE) || !defined(USE_CONSOLE)

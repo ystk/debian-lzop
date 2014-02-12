@@ -10,7 +10,6 @@ src/frames.c
 src/help.c
 src/lzop.c
 src/mblock.c
-src/mygetopt.c
 src/p_lzo.c
 src/s_curses.c
 src/s_djgpp2.c

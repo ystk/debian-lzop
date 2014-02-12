@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 #
-# Copyright (C) 1996-2005 Markus F.X.J. Oberhumer
+# Copyright (C) 1996-2010 Markus F.X.J. Oberhumer
 #
 
 SUFFIXES = .1 .html .man .pod .ps .tex .texi .txt
@@ -19,7 +19,7 @@ doc-clean:
 
 
 .pod.1:
-	pod2man --center=" " --release="$(PACKAGE) $(VERSION)" --date="2005-07-25" $< > $@
+	pod2man --center=" " --release="$(PACKAGE) $(VERSION)" --date="2010-11-01" $< > $@
 
 .pod.html:
 	pod2html --noindex $< > $@

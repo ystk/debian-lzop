@@ -2,7 +2,7 @@
 
    This file is part of the lzop file compressor.
 
-   Copyright (C) 1996-2005 Markus Franz Xaver Johannes Oberhumer
+   Copyright (C) 1996-2010 Markus Franz Xaver Johannes Oberhumer
    All Rights Reserved.
 
    lzop and the LZO library are free software; you can redistribute them
@@ -27,7 +27,7 @@
 
 
 #ifndef __SCREEN_H
-#define __SCREEN_H
+#define __SCREEN_H 1
 
 #if defined(USE_SCREEN)
 

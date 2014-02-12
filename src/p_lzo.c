@@ -1,8 +1,8 @@
-/* p_lzo.c --
+/* p_lzo.c -- LZO compression
 
    This file is part of the lzop file compressor.
 
-   Copyright (C) 1996-2005 Markus Franz Xaver Johannes Oberhumer
+   Copyright (C) 1996-2010 Markus Franz Xaver Johannes Oberhumer
    All Rights Reserved.
 
    lzop and the LZO library are free software; you can redistribute them
@@ -134,7 +134,7 @@ void lzo_init_compress_header(header_t *h)
 // memory setup
 **************************************************************************/
 
-#if defined(ACC_OS_DOS16) && !defined(__DPMI16__)
+#if defined(ACC_OS_DOS16) && !defined(ACC_ARCH_I086PM)
 #  define BLOCK_SIZE        (128*1024l)
 #else
 #  define BLOCK_SIZE        (256*1024l)
@@ -199,15 +199,19 @@ lzo_bool lzo_enter(const header_t *h)
     int r;
     lzo_uint32 wrk_len;
 
+#if defined(WITH_THREADS)
+    if (opt_num_threads > 1)
+        return lzo_threaded_enter(h);
+#endif
+
     if (h != NULL)
     {
-#if !defined(NDEBUG)
-        if (h->flags & F_ADLER32_C)
-            { assert(h->flags & F_ADLER32_D); }
-        if (h->flags & F_CRC32_C)
-            { assert(h->flags & F_CRC32_D); }
-#endif
-        return 1;
+        r = 1;
+        if ((h->flags & F_ADLER32_C) && !(h->flags & F_ADLER32_D))
+            { r = 0; assert(h->flags & F_ADLER32_D); }
+        if ((h->flags & F_CRC32_C) && !(h->flags & F_CRC32_D))
+            { r = 0; assert(h->flags & F_CRC32_D); }
+        return r;
     }
 
 #if 0
@@ -260,6 +264,12 @@ lzo_bool lzo_enter(const header_t *h)
 
 void lzo_leave(const header_t *h)
 {
+#if defined(WITH_THREADS)
+    if (opt_num_threads > 1) {
+        lzo_threaded_leave(h);
+        return;
+   }
+#endif
     if (h == NULL)
         free_mem();
 }
@@ -280,6 +290,11 @@ lzo_bool lzo_compress(file_t *fip, file_t *fop, const header_t *h)
     lzo_uint32 c_crc32 = CRC32_INIT_VALUE, d_crc32 = CRC32_INIT_VALUE;
     lzo_int l;
     lzo_bool ok = 1;
+
+#if defined(WITH_THREADS)
+    if (opt_num_threads > 1)
+        return lzo_threaded_compress(fip, fop, h, skip);
+#endif
 
     for (;;)
     {
@@ -387,6 +402,11 @@ lzo_bool lzo_decompress(file_t *fip, file_t *fop,
     lzo_bytep b1;
     lzo_bytep const b2 = block->mb_mem;
 
+#if defined(WITH_THREADS)
+    if (opt_num_threads > 1)
+        return lzo_threaded_decompress(fip, fop, h, skip);
+#endif
+
     use_seek = skip || opt_cmd == CMD_LIST || opt_cmd == CMD_LS ||
                        opt_cmd == CMD_INFO;
 
@@ -431,7 +451,7 @@ lzo_bool lzo_decompress(file_t *fip, file_t *fop,
         if (dst_len > block_size)
         {
             /* should not happen - not yet implemented */
-            fatal(fip,"block size too small -- use option `--blocksize'");
+            fatal(fip,"block size too small -- use option '--blocksize'");
             ok = 0; break;
         }
         assert(block->mb_size >= src_len);

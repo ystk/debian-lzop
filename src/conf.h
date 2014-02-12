@@ -2,7 +2,7 @@
 
    This file is part of the lzop file compressor.
 
-   Copyright (C) 1996-2005 Markus Franz Xaver Johannes Oberhumer
+   Copyright (C) 1996-2010 Markus Franz Xaver Johannes Oberhumer
    All Rights Reserved.
 
    lzop and the LZO library are free software; you can redistribute them
@@ -27,7 +27,7 @@
 
 
 #ifndef __LZOP_CONF_H
-#define __LZOP_CONF_H
+#define __LZOP_CONF_H 1
 
 #if defined(LZOP_HAVE_CONFIG_H)
 #  include <config.h>
@@ -97,32 +97,32 @@
 **************************************************************************/
 
 #if defined(ACC_OS_EMX)
-#  define DOSISH
+#  define DOSISH 1
 #  define F_OS          (_osmode == 0 ? F_OS_FAT : F_OS_OS2)
 #  define F_CS          (_osmode == 0 ? F_CS_DOS : F_CS_NATIVE)
 #elif (ACC_OS_DOS16 || ACC_OS_DOS32)
-#  define DOSISH
+#  define DOSISH 1
 #  define F_OS          F_OS_FAT
 #  define F_CS          F_CS_DOS
 #elif (ACC_OS_OS216 || ACC_OS_OS2)
-#  define DOSISH
+#  define DOSISH 1
 #  define F_OS          F_OS_OS2
 #elif (ACC_OS_TOS)
-#  define DOSISH
+#  define DOSISH 1
 #  define F_OS          F_OS_ATARI
 #elif (ACC_OS_WIN16)
-#  define DOSISH
+#  define DOSISH 1
 #  define F_OS          F_OS_FAT
 #  define F_CS          F_CS_WIN16
 #elif (ACC_OS_WIN32 || ACC_OS_WIN64 || ACC_OS_CYGWIN)
-#  define DOSISH
+#  define DOSISH 1
 #  define F_OS          F_OS_VFAT
 #  define F_CS          F_CS_WIN32
 #endif
 
 
 #if defined(DOSISH)
-#  define OPT_NAME_DEFAULT
+#  define OPT_NAME_DEFAULT 1
 #  if !defined(DIR_SEP)
 #    define DIR_SEP         "/\\"
 #  endif
@@ -173,7 +173,7 @@
 **************************************************************************/
 
 #if defined(__DJGPP__)
-#  define NO_SETMODE
+#  define NO_SETMODE 1
 #  if ((__DJGPP__ * 100 + __DJGPP_MINOR__) < 203)
 #    error "need djgpp 2.03 or above"
 #  endif
@@ -187,7 +187,7 @@
 #  if defined(__MINT__)
 #  elif (ACC_CC_PUREC || ACC_CC_TURBOC)
 #    include <ext.h>
-#    define O_EXCL_BROKEN
+#    define O_EXCL_BROKEN 1
 #    if !defined(S_IFMT)
 #      if defined(S_IFREG) && defined(S_IFDIR) && defined(S_IFCHR)
 #        define S_IFMT      (S_IFREG | S_IFDIR | S_IFCHR)
@@ -218,7 +218,7 @@
 #  define RETSIGTYPE        void
 #endif
 #ifndef SIGTYPEENTRY
-#  define SIGTYPEENTRY
+#  define SIGTYPEENTRY      /*empty*/
 #endif
 
 #if !defined(MODE_T)
@@ -375,6 +375,7 @@ extern int opt_crc32;
 extern lzo_bool opt_decompress_safe;
 extern int opt_force;
 extern int opt_name;
+#define MAX_NUM_THREADS 64
 extern int opt_num_threads;
 extern const char *opt_output_name;
 extern lzo_bool opt_optimize;
@@ -563,6 +564,21 @@ lzo_bool lzo_decompress(file_t *fip, file_t *fop, const header_t *h, lzo_bool sk
 int lzo_get_method(header_t *h);
 int lzo_set_method(int m, int l);
 void lzo_init_compress_header(header_t *h);
+
+#endif
+
+
+/*************************************************************************
+// p_lzo_mt.c
+**************************************************************************/
+
+#if defined(WITH_LZO) && defined(WITH_THREADS)
+
+lzo_bool lzo_threaded_enter(const header_t *h);
+void lzo_threaded_leave(const header_t *h);
+
+lzo_bool lzo_threaded_compress(file_t *fip, file_t *fop, const header_t *h);
+lzo_bool lzo_threaded_decompress(file_t *fip, file_t *fop, const header_t *h, lzo_bool skip);
 
 #endif
 

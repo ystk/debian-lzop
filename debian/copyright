@@ -4,11 +4,11 @@ it has been maintainer by Peter Eisentraut <petere@debian.org>.
 
 It was downloaded from http://www.lzop.org/download/.
 
-Upstream author: Markus F.X.J. Oberhumer
+Upstream author: Markus F.X.J. Oberhumer <markus@oberhumer.com>
 
 Copyright:
 
-   Copyright (C) 1996-2003 Markus Franz Xaver Johannes Oberhumer
+   Copyright (C) 1996-2010 Markus Franz Xaver Johannes Oberhumer
    All Rights Reserved.
 
    lzop and the LZO library are free software; you can redistribute them
@@ -17,4 +17,4 @@ Copyright:
    the License, or (at your option) any later version.
 
 On Debian systems, the complete text of the GNU GPL can be found in the
-file /usr/share/common-licenses/GPL.
+file /usr/share/common-licenses/GPL-2.

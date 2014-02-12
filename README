@@ -5,8 +5,8 @@ lzop -- a very fast file compressor
 Author  : Markus Franz Xaver Johannes Oberhumer
           <markus@oberhumer.com>
           http://www.oberhumer.com/opensource/lzop/
-Version : 1.01
-Date    : 27-Apr-2003
+Version : 1.03
+Date    : 01-Nov-2010
 
 
 Introduction
@@ -33,10 +33,10 @@ See the file INSTALL for compilation and installation instructions.
 General functionality and behaviour has been modelled very closely
 after gzip. The main differences between lzop and gzip are:
 
-- Files compressed by lzop will have the suffix `.lzo'
+- Files compressed by lzop will have the suffix '.lzo'
 
 - lzop does not delete the input file(s) by default.
-  You have to use the option `-U' if you want this behaviour.
+  You have to use the option '-U' if you want this behaviour.
 
 
 lzop uses the LZO data compression library for compression

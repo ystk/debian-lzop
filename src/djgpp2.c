@@ -2,7 +2,7 @@
 
    This file is part of the lzop file compressor.
 
-   Copyright (C) 1996-2005 Markus Franz Xaver Johannes Oberhumer
+   Copyright (C) 1996-2010 Markus Franz Xaver Johannes Oberhumer
    All Rights Reserved.
 
    lzop and the LZO library are free software; you can redistribute them
@@ -42,7 +42,7 @@
 unsigned _stklen = 65536;
 
 
-/* This is called before `main'. */
+/* This is called before 'main'. */
 static void __attribute__((__constructor__))
 djgpp_startup (void)
 {

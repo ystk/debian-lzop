@@ -2,7 +2,7 @@
 
    This file is part of the lzop file compressor.
 
-   Copyright (C) 1996-2005 Markus Franz Xaver Johannes Oberhumer
+   Copyright (C) 1996-2010 Markus Franz Xaver Johannes Oberhumer
    All Rights Reserved.
 
    lzop and the LZO library are free software; you can redistribute them
@@ -499,8 +499,8 @@ void mode_string(MODE_T m, char *str)
    return it instead.  Return NULL if the rename failed (shouldn't happen).
 
    The file name changes are: (1) any name that is reserved by a DOS
-   device driver (such as `prn.txt' or `aux.c') is prepended with a `_';
-   and (2) illegal characters are replaced with `_' or `-' (well, almost;
+   device driver (such as 'prn.txt' or 'aux.c') is prepended with a '_';
+   and (2) illegal characters are replaced with '_' or '-' (well, almost;
    look at the code below for details).  */
 
 #define is_slash(x)     fn_is_sep(x)
@@ -614,14 +614,14 @@ char *maybe_rename_file(const char *original_name)
 
         /* The list of character devices is not constant: it depends on
          what device drivers did they install in their CONFIG.SYS.
-         `stat' will tell us if the basename of the file name is a
+         'stat' will tell us if the basename of the file name is a
          characer device.  */
         while (stat(base, &st_buf) == 0 && S_ISCHR(st_buf.st_mode))
         {
             size_t blen = strlen(base);
 
             /* I don't believe any DOS character device names begin with a
-             `_'.  But in case they invent such a device, let us try twice.  */
+             '_'.  But in case they invent such a device, let us try twice.  */
             if (++i > 2)
                 return (char *)0;
 
@@ -643,16 +643,18 @@ char *maybe_rename_file(const char *original_name)
 **************************************************************************/
 
 #if (ACC_CC_MSC && (_MSC_VER >= 1000 && _MSC_VER < 1200))
-   /* avoid `-W4' warnings in <windows.h> */
+   /* avoid '-W4' warnings in <windows.h> */
 #  pragma warning(disable: 4201 4214 4514)
 #endif
 #if (ACC_CC_MSC && (_MSC_VER >= 1300))
-   /* avoid `-Wall' warnings in <windows.h> */
+   /* avoid '-Wall' warnings in <windows.h> */
 #  pragma warning(disable: 4255)
 #endif
 
 #define ACC_WANT_ACC_INCI_H 1
+#define ACC_WANT_ACCLIB_GETOPT 1
 #define ACC_WANT_ACCLIB_HALLOC 1
+#define ACC_WANT_ACCLIB_HMEMCPY 1
 #define ACC_WANT_ACCLIB_HSREAD 1
 #define ACC_WANT_ACCLIB_MISC 1
 #define ACC_WANT_ACCLIB_WILDARGV 1

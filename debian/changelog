@@ -1,3 +1,28 @@
+lzop (1.03-3) unstable; urgency=low
+
+  * Remove extra tight dependencies on liblzo; they are not needed anymore
+
+ -- Peter Eisentraut <petere@debian.org>  Tue, 08 Nov 2011 21:13:09 +0200
+
+lzop (1.03-2) unstable; urgency=low
+
+  * Updated dependencies for new lzo version
+  * Updated standards version
+
+ -- Peter Eisentraut <petere@debian.org>  Wed, 06 Jul 2011 07:26:48 +0300
+
+lzop (1.03-1) unstable; urgency=low
+
+  * New upstream release (closes: #610733)
+  * Updated dependencies for new lzo version (closes: #614217)
+  * Changed source format to 3.0 (quilt)
+  * Removed redundant section fields
+  * Pointed copyright to non-symlinked version of GPL file
+  * Updated standards version
+  * Added upstream contact email in debian/copyright (closes: #520679)
+
+ -- Peter Eisentraut <petere@debian.org>  Sat, 26 Feb 2011 15:36:37 +0200
+
 lzop (1.02~rc1-2) unstable; urgency=low
 
   * Updated standards version
